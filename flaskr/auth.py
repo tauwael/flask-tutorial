@@ -5,16 +5,17 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flask.db import get_db
+from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/register', methods='GET', 'POST')
+@bp.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         db = get_db()
+        error = None
 
         if not username:
             error = 'Username is required'
@@ -59,7 +60,7 @@ def login():
 
         flash(error)
 
-        return render_template('auth/login.html')
+    return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -73,7 +74,7 @@ def load_logged_in_user():
         ).fetchone()
 
 @bp.route('/logout')
-def logout();
+def logout():
     session.clear()
     return redirect(url_for('index'))
 
